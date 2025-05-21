@@ -1,0 +1,109 @@
+modules:
+  user:
+    description: User management APIs
+    params:
+      - name: token
+        type: string
+        required: true
+        description: Auth token
+      - name: tenant
+        type: string
+        required: true
+        description: Tenant ID
+    request:
+      headers:
+        Authorization: Bearer ${token}
+        X-Tenant-ID: ${tenant}
+    modules:
+      profile:
+        description: User profile management
+        apis:
+          get_settings:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: User ID
+            request:
+              method: GET
+              url: https://www.baidu.com/${tenant}/users/${id}/settings
+          update_settings:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: User ID
+              - name: settings
+                type: string
+                required: true
+                description: Settings JSON
+            request:
+              method: POST
+              url: https://api.example.com/${tenant}/users/${id}/settings
+              headers:
+                Content-Type: application/json
+              body: ${settings}
+          upload_avatar:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: User ID
+              - name: file
+                type: file
+                required: true
+                description: Avatar image file
+            request:
+              method: POST
+              url: https://api.example.com/${tenant}/users/${id}/avatar
+              form:
+                avatar: ${file}
+  admin:
+    description: Admin management APIs
+    params:
+      - name: admin_token
+        type: string
+        required: true
+        description: Admin auth token
+      - name: env
+        type: string
+        required: true
+        description: Environment (prod/staging)
+    request:
+      headers:
+        Authorization: Bearer ${admin_token}
+        X-Environment: ${env}
+    modules:
+      roles:
+        description: Role management
+        request:
+          headers:
+            X-Service: role-management
+        apis:
+          list:
+            request:
+              method: GET
+              url: https://api.example.com/${env}/roles
+          assign:
+            params:
+              - name: user_id
+                type: string
+                required: true
+                description: User ID
+              - name: role
+                type: string
+                required: true
+                description: Role name
+              - name: role_type
+                type: string
+                description: Role type
+            request:
+              method: POST
+              url: https://api.example.com/${env}/users/${user_id}/roles
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "role": "${role}",
+                  "type": "${role_type}"
+                }
