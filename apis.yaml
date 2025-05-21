@@ -13,97 +13,226 @@ modules:
     request:
       headers:
         Authorization: Bearer ${token}
-        X-Tenant-ID: ${tenant}
     modules:
-      profile:
-        description: User profile management
-        apis:
-          get_settings:
-            params:
-              - name: id
-                type: string
-                required: true
-                description: User ID
-            request:
-              method: GET
-              url: https://www.baidu.com/${tenant}/users/${id}/settings
-          update_settings:
-            params:
-              - name: id
-                type: string
-                required: true
-                description: User ID
-              - name: settings
-                type: string
-                required: true
-                description: Settings JSON
-            request:
-              method: POST
-              url: https://api.example.com/${tenant}/users/${id}/settings
-              headers:
-                Content-Type: application/json
-              body: ${settings}
-          upload_avatar:
-            params:
-              - name: id
-                type: string
-                required: true
-                description: User ID
-              - name: file
-                type: file
-                required: true
-                description: Avatar image file
-            request:
-              method: POST
-              url: https://api.example.com/${tenant}/users/${id}/avatar
-              form:
-                avatar: ${file}
-  admin:
-    description: Admin management APIs
-    params:
-      - name: admin_token
-        type: string
-        required: true
-        description: Admin auth token
-      - name: env
-        type: string
-        required: true
-        description: Environment (prod/staging)
-    request:
-      headers:
-        Authorization: Bearer ${admin_token}
-        X-Environment: ${env}
-    modules:
-      roles:
-        description: Role management
-        request:
-          headers:
-            X-Service: role-management
+      todos:
+        description: Todo management using JSONPlaceholder
         apis:
           list:
             request:
               method: GET
-              url: https://api.example.com/${env}/roles
-          assign:
+              url: https://jsonplaceholder.typicode.com/todos
+          get_todo:
             params:
-              - name: user_id
+              - name: id
                 type: string
                 required: true
-                description: User ID
-              - name: role
+                description: Todo ID
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/todos/${id}
+          create_todo:
+            params:
+              - name: title
                 type: string
                 required: true
-                description: Role name
-              - name: role_type
-                type: string
-                description: Role type
+                description: Todo title
+              - name: completed
+                type: boolean
+                description: Todo completion status
             request:
               method: POST
-              url: https://api.example.com/${env}/users/${user_id}/roles
+              url: https://jsonplaceholder.typicode.com/todos
               headers:
                 Content-Type: application/json
               body: |
                 {
-                  "role": "${role}",
-                  "type": "${role_type}"
+                  "title": "${title}",
+                  "completed": ${completed}
                 }
+      photos:
+        description: Photo management using JSONPlaceholder
+        apis:
+          list:
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/photos
+          get_photo:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: Photo ID
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/photos/${id}
+  public:
+    description: Public APIs that don't require authentication
+    modules:
+      random:
+        description: Random data APIs
+        apis:
+          joke:
+            request:
+              method: GET
+              url: https://official-joke-api.appspot.com/random_joke
+          cat_fact:
+            request:
+              method: GET
+              url: https://catfact.ninja/fact
+          dog_image:
+            request:
+              method: GET
+              url: https://dog.ceo/api/breeds/image/random
+      weather:
+        description: Weather information
+        apis:
+          current:
+            params:
+              - name: city
+                type: string
+                required: true
+                description: City name
+            request:
+              method: GET
+              url: https://goweather.herokuapp.com/weather/${city}
+              
+  auth:
+    description: Authentication APIs using reqres.in test API
+    modules:
+      user:
+        description: User authentication
+        apis:
+          register:
+            params:
+              - name: email
+                type: string
+                required: true
+                description: User email
+              - name: password
+                type: string
+                required: true
+                description: User password
+            request:
+              method: POST
+              url: https://reqres.in/api/register
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "email": "${email}",
+                  "password": "${password}"
+                }
+          login:
+            params:
+              - name: email
+                type: string
+                required: true
+                description: User email
+              - name: password
+                type: string
+                required: true
+                description: User password
+            request:
+              method: POST
+              url: https://reqres.in/api/login
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "email": "${email}",
+                  "password": "${password}"
+                }
+                
+  admin:
+    description: Admin APIs using JSONPlaceholder
+    modules:
+      users:
+        description: User management
+        apis:
+          list:
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/users
+          get_user:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: User ID
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/users/${id}
+          create_user:
+            params:
+              - name: name
+                type: string
+                required: true
+                description: User name
+              - name: email
+                type: string
+                required: true
+                description: User email
+            request:
+              method: POST
+              url: https://jsonplaceholder.typicode.com/users
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "name": "${name}",
+                  "email": "${email}"
+                }
+
+  posts:
+    description: Blog Posts APIs using JSONPlaceholder
+    modules:
+      blog:
+        description: Blog post management
+        apis:
+          list:
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/posts
+          get_post:
+            params:
+              - name: id
+                type: string
+                required: true
+                description: Post ID
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/posts/${id}
+          create_post:
+            params:
+              - name: title
+                type: string
+                required: true
+                description: Post title
+              - name: body
+                type: string
+                required: true
+                description: Post content
+              - name: userId
+                type: string
+                required: true
+                description: Author user ID
+            request:
+              method: POST
+              url: https://jsonplaceholder.typicode.com/posts
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "title": "${title}",
+                  "body": "${body}",
+                  "userId": ${userId}
+                }
+          get_comments:
+            params:
+              - name: postId
+                type: string
+                required: true
+                description: Post ID
+            request:
+              method: GET
+              url: https://jsonplaceholder.typicode.com/posts/${postId}/comments
